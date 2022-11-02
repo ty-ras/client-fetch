@@ -10,7 +10,6 @@
       // If we downgrade to 3.2.8, then it has vulnerability (not a big issue as it is only dev dep), and its "Headers" are lacking "entries" iterator.
       // If we add it via module augmentation, that augmentation ends up in .d.ts files, which is undesireable.
       // Node 18 has fetch of its own, however, no types for it exist yet: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/60924
-      // Version 3.2.8 has vulnerability, but it is only ever used in tests as dev dependency anyway
       // https://github.com/node-fetch/node-fetch/issues/1617#issuecomment-1228259911
       "DOM",
       "DOM.Iterable"

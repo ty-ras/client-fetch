@@ -1,15 +1,23 @@
 import type * as feCommon from "@ty-ras/data-frontend";
+import * as errors from "./errors";
+import * as input from "./input";
 
-export const createCallHTTPEndpoint =
-  (schemeHostAndPort: string): feCommon.CallHTTPEndpoint =>
-  async ({ headers, url, method, query, ...args }) => {
+export const createCallHTTPEndpoint = (
+  args: input.HTTPEndpointCallerArgs,
+): feCommon.CallHTTPEndpoint => {
+  // If some garbage provided as schemeHostAndPort, then this will throw
+  const { baseURLString, baseURLObject } = input.validateBaseURL(args);
+  return async ({ headers, url, method, query, ...args }) => {
     const body = "body" in args ? JSON.stringify(args.body) : undefined;
 
-    const urlObject = new URL(`${schemeHostAndPort}${url}`);
-    if (urlObject.pathname != url) {
-      throw new Error(
-        `Attempted to provide something else than pathname as URL: ${url}`,
-      );
+    const urlObject = new URL(`${baseURLString}${url}`);
+    if (
+      // This will cover situation when no path name is passed as input and base URL object just magically creates '/' as its pathname
+      urlObject.pathname !== baseURLObject.pathname &&
+      // This will cover when user tries to glue e.g. query string at the end of URL
+      urlObject.pathname != `${baseURLObject.pathname}${url}`
+    ) {
+      throw new errors.InvalidPathnameError(url);
     }
     if (query) {
       urlObject.search = new URLSearchParams(
@@ -34,7 +42,7 @@ export const createCallHTTPEndpoint =
         ...(body === undefined
           ? {}
           : {
-              ["Content-Type"]: "application/json",
+              ["Content-Type"]: "application/json", // TODO ;charset=utf8 ?
               // ["Content-Length"]: `${body.byteLength}`,
               // ["Content-Encoding"]: encoding,
             }),
@@ -46,13 +54,17 @@ export const createCallHTTPEndpoint =
     // So just verify that it is one of the OK or No Content.
     const { status, headers: responseHeaders } = response;
     if (status !== 200 && status !== 204) {
-      throw new Error(`Status code ${status} was returned.`);
+      throw new errors.Non2xxStatusCodeError(status);
     }
 
     const bodyString = await response.text();
+    const headersObject = Object.fromEntries(responseHeaders.entries());
     return {
       body: bodyString.length > 0 ? JSON.parse(bodyString) : undefined,
       // TODO multiple entries with same header name!
-      headers: Object.fromEntries(responseHeaders.entries()),
+      ...(Object.keys(headersObject).length > 0
+        ? { headers: headersObject }
+        : {}),
     };
   };
+};
