@@ -5,18 +5,13 @@ import * as input from "./input";
 export const createCallHTTPEndpoint = (
   args: input.HTTPEndpointCallerArgs,
 ): feCommon.CallHTTPEndpoint => {
-  // If some garbage provided as schemeHostAndPort, then this will throw
-  const { baseURLString, baseURLObject } = input.validateBaseURL(args);
+  // If some garbage provided as args, then this will throw
+  const baseURLString = input.validateBaseURL(args);
   return async ({ headers, url, method, query, ...args }) => {
     const body = "body" in args ? JSON.stringify(args.body) : undefined;
 
     const urlObject = new URL(`${baseURLString}${url}`);
-    if (
-      // This will cover situation when no path name is passed as input and base URL object just magically creates '/' as its pathname
-      urlObject.pathname !== baseURLObject.pathname &&
-      // This will cover when user tries to glue e.g. query string at the end of URL
-      urlObject.pathname != `${baseURLObject.pathname}${url}`
-    ) {
+    if (urlObject.search.length > 0 || urlObject.hash.length > 0) {
       throw new errors.InvalidPathnameError(url);
     }
     if (query) {
