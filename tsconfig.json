@@ -4,7 +4,15 @@
     "module": "es2022",
     "moduleResolution": "node",
     "lib": [
-      "ES2022"
+      "ES2022",
+      // Notice: we only reference DOM in order to get around the fact that node-fetch 3.2.10 is not compilable without it:
+      // https://github.com/node-fetch/node-fetch/issues/1657
+      // If we downgrade to 3.2.8, then it has vulnerability (not a big issue as it is only dev dep), and its "Headers" are lacking "entries" iterator.
+      // If we add it via module augmentation, that augmentation ends up in .d.ts files, which is undesireable.
+      // Node 18 has fetch of its own, however, no types for it exist yet: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/60924
+      // https://github.com/node-fetch/node-fetch/issues/1617#issuecomment-1228259911
+      "DOM",
+      "DOM.Iterable"
     ],
     "target": "ES2022",
     "esModuleInterop": true,
