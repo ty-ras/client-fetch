@@ -7,7 +7,7 @@ const invokeValidate = (
   expectedURLString: string,
 ) => {
   c.plan(1);
-  const { baseURLString } = spec.validateBaseURL(opts);
+  const baseURLString = spec.validateBaseURL(opts);
   c.deepEqual(baseURLString, expectedURLString);
 };
 

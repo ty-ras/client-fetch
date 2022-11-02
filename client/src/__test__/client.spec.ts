@@ -157,6 +157,20 @@ test.serial("Validate that callHttp detects invalid pathname", async (c) => {
 });
 
 test.serial(
+  "Validate that callHttp detects invalid pathname with hash",
+  async (c) => {
+    c.plan(1);
+    await c.throwsAsync(
+      async () =>
+        await callHttp({ method: "GET", url: "/path#hash=not-allowed" }),
+      {
+        instanceOf: errors.InvalidPathnameError,
+      },
+    );
+  },
+);
+
+test.serial(
   "Validate that callHttp detects non-200/204 status code",
   async (c) => {
     c.plan(2);

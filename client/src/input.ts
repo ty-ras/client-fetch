@@ -16,9 +16,7 @@ export const validateBaseURL = (args: HTTPEndpointCallerArgs) => {
           args.path ?? ""
         }`;
 
-  return {
-    baseURLString,
-    // Validate by trying to construct URL object
-    baseURLObject: new URL(baseURLString),
-  };
+  // Validate by trying to construct URL object
+  new URL(baseURLString);
+  return baseURLString;
 };
