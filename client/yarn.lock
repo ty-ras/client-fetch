@@ -378,23 +378,23 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
-"@ty-ras/data-frontend@0.12.4":
-  version "0.12.4"
-  resolved "https://registry.yarnpkg.com/@ty-ras/data-frontend/-/data-frontend-0.12.4.tgz#c3599654b646a5642a80415893b8a6ab8c49bbe7"
-  integrity sha512-mSG53IgJxLm5dDfpD1FZE+NVIR3NPVb7zuDvpfZULEo0jPR9IxW7KDj++dcqRXlHqRh7ahtyQCB0Hj1jr6vQpA==
+"@ty-ras/data-frontend@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@ty-ras/data-frontend/-/data-frontend-0.13.0.tgz#110eb40ee509363a4d8ac8a13458df96634b558a"
+  integrity sha512-Oqhv+u34kHRGwkW0HaAkXHZm4ir0+Jz/gxmXgzG55Wyv9Bcz5QFmtxnt60yqyBZoZjcvv/TTN3+pEsh1o49Gvg==
   dependencies:
-    "@ty-ras/data" "0.12.3"
-    "@ty-ras/protocol" "0.12.1"
+    "@ty-ras/data" "0.13.0"
+    "@ty-ras/protocol" "0.13.0"
 
-"@ty-ras/data@0.12.3":
-  version "0.12.3"
-  resolved "https://registry.yarnpkg.com/@ty-ras/data/-/data-0.12.3.tgz#89f50dab7180906ba8aa7e8930c5a0ccea5f2132"
-  integrity sha512-MW0TNixdi4fbqWsJAtUNPSxvGVn8YhkX2Y9RAOd/HxlJ/nrRn1CQLU2qCis5Zky7Xkc519WPJTr7+tmUer1alA==
+"@ty-ras/data@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@ty-ras/data/-/data-0.13.0.tgz#45acb046958350de01916f2cb433ec9da165abef"
+  integrity sha512-AZYCdMiBPTO4+V0Apg+i9XUo17c4C5Up+0O8Jk8cBYVCm/4W5kbzGdcE40GKNFqkn71IVrfjv5GAaMpg5EbFXg==
 
-"@ty-ras/protocol@0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@ty-ras/protocol/-/protocol-0.12.1.tgz#37146e1faf19f1d21a5151faa9cccde226330bbd"
-  integrity sha512-n5fa71l1zFFMIjkTercu+PWyTwyBgUqM83o3yWMOG80K/+U0WbNTwKZexaBWPph0FLj1vhWZLkWGfCuia+4w4g==
+"@ty-ras/protocol@0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@ty-ras/protocol/-/protocol-0.13.0.tgz#1718b204f4d29e1eea4e39c25f909ce9f522f2de"
+  integrity sha512-rGs/gsdpQTIJLTd6wATTw5CXHAnAEXLKmZstRlKvOkKkslktbyIrl83+l+mlVRp/ZkIqpjOfL6eSEID7jnIS9g==
 
 "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.4"
