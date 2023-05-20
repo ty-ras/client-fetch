@@ -1,12 +1,22 @@
+/**
+ * @file This file contains function to create {@link feCommon.CallHTTPEndpoint} which will use `fetch` API to do the requests.
+ */
+
 import type * as feCommon from "@ty-ras/data-frontend";
 import * as errors from "./errors";
-import * as input from "./input";
 
+/**
+ * This function will create a {@link feCommon.CallHTTPEndpoint} callback which is locked on certain backend (scheme, hostname, etc).
+ * It will throw whatever {@link URL} constructors throws if provided with invalid backend information.
+ * @param callerArgs The {@link HTTPEndpointCallerArgs}: either base URL string, or structured information about the scheme, hostname, etc of the backend.
+ * @returns A {@link feCommon.CallHTTPEndpoint} callback which can be used to create instances of {@link feCommon.APICallFactoryBase}.
+ * It will throw {@link errors.InvalidPathnameError} or {@link errors.Non2xxStatusCodeError} if invoked with wrong arguments, and also whatever the {@link URL} constructor might throw on invalid URLs.
+ */
 export const createCallHTTPEndpoint = (
-  args: input.HTTPEndpointCallerArgs,
+  callerArgs: HTTPEndpointCallerArgs,
 ): feCommon.CallHTTPEndpoint => {
   // If some garbage provided as args, then this will throw
-  const baseURLString = input.validateBaseURL(args);
+  const baseURLString = validateBaseURL(callerArgs);
   return async ({ headers, url, method, query, ...args }) => {
     const body = "body" in args ? JSON.stringify(args.body) : undefined;
 
@@ -62,4 +72,54 @@ export const createCallHTTPEndpoint = (
         : {}),
     };
   };
+};
+
+/**
+ * This type is the argument of {@link createCallHTTPEndpoint}.
+ * It can be either string, which is then interpreted as full URL.
+ * Alternatively, it can be a structured object {@link HTTPEndpointCallerArgs}.
+ */
+export type HTTPEndpointCallerArgs = string | HTTPEndpointCallerOptions;
+
+/**
+ * This type is the structured version of URL string passed to {@link createCallHTTPEndpoint}.
+ */
+export interface HTTPEndpointCallerOptions {
+  /**
+   * Which scheme should be used for URL.
+   * Typically either `http` or `https`.
+   */
+  scheme: string;
+  /**
+   * The host name of the backend HTTP endpoints.
+   */
+  host: string;
+  /**
+   * The optional port to use.
+   */
+  port?: number;
+
+  /**
+   * The optional path prefix for backend HTTP endpoints.
+   * If provided, typically should include the last `/` character - the given URL paths will be concatenated directly after this without putting any logic in concatenation.
+   */
+  path?: string;
+}
+
+/**
+ * This is exported for the tests only - it is not exported via index.ts
+ * @param args The {@link HTTPEndpointCallerArgs}.
+ * @returns The constructed URL string.
+ */
+export const validateBaseURL = (args: HTTPEndpointCallerArgs) => {
+  const baseURLString =
+    typeof args === "string"
+      ? args
+      : `${args.scheme}://${args.host}${"port" in args ? `:${args.port}` : ""}${
+          args.path ?? ""
+        }`;
+
+  // Validate by trying to construct URL object
+  new URL(baseURLString);
+  return baseURLString;
 };

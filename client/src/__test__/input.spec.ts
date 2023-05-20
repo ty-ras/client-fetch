@@ -1,5 +1,11 @@
+/**
+ * @file This file contains tests for input argument validation of {@link spec.createCallHTTPEndpoint}.
+ */
+
 import test, { ExecutionContext } from "ava";
-import * as spec from "../input";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type * as _ from "../fetch"; // Otherwise TS-Node will not work
+import * as spec from "../client";
 
 const invokeValidate = (
   c: ExecutionContext,
