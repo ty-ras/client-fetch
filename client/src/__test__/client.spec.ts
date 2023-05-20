@@ -1,10 +1,17 @@
+/**
+ * @file This file contains tests for file `../client.ts`.
+ */
+
 import test, { ExecutionContext } from "ava";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type * as _ from "../fetch"; // Otherwise TS-Node will not work
 import * as spec from "../client";
 import * as errors from "../errors";
 // Notice that using fetch-mock forces downgrade of node-fetch to 2.x series.
 // This is because fetch-mock uses 'require' to load node-fetch, and versions 3.x of node-fetch do not support that.
-import fetchMock, { MockRequest } from "fetch-mock";
+import fetchMock, { type MockRequest } from "fetch-mock";
 import * as data from "@ty-ras/data-frontend";
+
 // If we don't do this, fetch-mock will attempt to perform some of its own things onto returned response.
 fetchMock.config.Response = Response;
 
@@ -18,7 +25,7 @@ const returnedResponses: MockedFetchResponses = [];
 let idx = 0;
 fetchMock.mock({
   matcher: () => true,
-  response: (url, opts) => {
+  response: (url: string, opts: Request) => {
     const response = returnedResponses[idx++];
     recordedCalls.push({ url, opts });
     return typeof response === "string"
@@ -135,7 +142,9 @@ test.serial(
   validateSuccessfulInvocation,
   { method: "GET", url: "/" },
   { body: undefined, headers: { dummyheader: "dummyValue" } },
-  new Response(Buffer.from(""), { headers: { dummyHeader: "dummyValue" } }),
+  new Response(Buffer.from(""), {
+    headers: { dummyHeader: "dummyValue" },
+  }),
   {
     url: fetchInputURL,
     opts: {

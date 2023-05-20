@@ -1,3 +1,7 @@
+/**
+ * @file This file contains tests for file `../errors.ts`.
+ */
+
 import test from "ava";
 import * as spec from "../errors";
 
