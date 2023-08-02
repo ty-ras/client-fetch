@@ -46,11 +46,12 @@ const validateSuccessfulInvocation = async (
   expectedResult: data.HTTPInvocationResult,
   mockedFetchResponse: MockedFetchResponses[number],
   expectedFetchInput: ExpectedFetchInputs[number],
+  callHttpInstance?: typeof callHttp,
 ) => {
   c.plan(2);
   resetState();
   returnedResponses.push(mockedFetchResponse);
-  const result = await callHttp(input);
+  const result = await (callHttpInstance ?? callHttp)(input);
   c.deepEqual(result, expectedResult);
   c.deepEqual(recordedCalls, [expectedFetchInput]);
 };
@@ -201,6 +202,29 @@ test.serial(
       },
     ]);
   },
+);
+
+test.serial(
+  "Validate that callHttp by default doesn't deserialize __proto__ properties",
+  validateSuccessfulInvocation,
+  { method: "GET", url: "/" },
+  { body: { testProperty: "yes" } },
+  JSON.stringify({ __proto__: "Injected", testProperty: "yes" }),
+  { url: fetchInputURL, opts: { method: "GET", headers: {} } },
+);
+
+test.serial(
+  "Validate that callHttp deserializes __proto__ property when instructed",
+  validateSuccessfulInvocation,
+  { method: "GET", url: "/" },
+  { body: { __proto__: "Injected", testProperty: "yes" } },
+  JSON.stringify({ __proto__: "Injected", testProperty: "yes" }),
+  { url: "http://example.com/", opts: { method: "GET", headers: {} } },
+  spec.createCallHTTPEndpoint({
+    scheme: "http",
+    host: "example.com",
+    allowProtoProperty: true,
+  }),
 );
 
 type MockedFetchResponses = Array<string | Response>;
