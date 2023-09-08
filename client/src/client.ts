@@ -17,7 +17,7 @@ export const createCallHTTPEndpoint = (
   callerArgs: HTTPEndpointCallerArgs,
 ): feCommon.CallHTTPEndpoint => {
   // If some garbage provided as args, then this will throw
-  const baseURLString = validateBaseURL(callerArgs);
+  const { origin, commonPathPrefix } = validateBaseURL(callerArgs);
   const allowProtoProperty =
     typeof callerArgs == "string"
       ? true
@@ -26,13 +26,7 @@ export const createCallHTTPEndpoint = (
   return async ({ headers, url, method, query, ...args }) => {
     const body = "body" in args ? JSON.stringify(args.body) : undefined;
 
-    const urlObject = new URL(`${baseURLString}${url}`);
-    if (urlObject.search.length > 0 || urlObject.hash.length > 0) {
-      throw new errors.InvalidPathnameError(url);
-    }
-    if (query) {
-      urlObject.search = getURLSearchParams(query);
-    }
+    const urlObject = constructURLObject(origin, commonPathPrefix, url, query);
 
     const response = await fetch(
       urlObject,
@@ -109,8 +103,11 @@ export const validateBaseURL = (args: HTTPEndpointCallerArgs) => {
         }`;
 
   // Validate by trying to construct URL object
-  new URL(baseURLString);
-  return baseURLString;
+  const baseURL = new URL(baseURLString);
+  return {
+    origin: baseURL.origin,
+    commonPathPrefix: baseURL.pathname.length > 1 ? baseURL.pathname : "",
+  };
 };
 
 const getURLSearchParams = (query: Record<string, unknown>) =>
@@ -146,3 +143,22 @@ const getFetchArgs = (
     ...headers,
   },
 });
+
+const constructURLObject = (
+  origin: string,
+  commonPathPrefix: string,
+  path: string,
+  query: Record<string, unknown> | undefined,
+) => {
+  const pathname = `${commonPathPrefix}${path}`.replaceAll(
+    /\?|#/g,
+    (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+  const urlObject = new URL(pathname, origin);
+
+  if (query) {
+    urlObject.search = getURLSearchParams(query);
+  }
+
+  return urlObject;
+};
