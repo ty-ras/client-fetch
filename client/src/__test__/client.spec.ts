@@ -155,28 +155,18 @@ test.serial(
   },
 );
 
-test.serial("Validate that callHttp detects invalid pathname", async (c) => {
-  c.plan(1);
-  await c.throwsAsync(
-    async () =>
-      await callHttp({ method: "GET", url: "/path?query=not-allowed" }),
-    {
-      instanceOf: errors.InvalidPathnameError,
-    },
-  );
-});
-
 test.serial(
-  "Validate that callHttp detects invalid pathname with hash",
-  async (c) => {
-    c.plan(1);
-    await c.throwsAsync(
-      async () =>
-        await callHttp({ method: "GET", url: "/path#hash=not-allowed" }),
-      {
-        instanceOf: errors.InvalidPathnameError,
-      },
-    );
+  "Validate that callHttp escapes invalid pathname",
+  validateSuccessfulInvocation,
+  { method: "GET", url: "/path?query=not-allowed#hash-not-allowed-either" },
+  { body: undefined },
+  "",
+  {
+    url: `${fetchInputURL}path%3Fquery=not-allowed%23hash-not-allowed-either`,
+    opts: {
+      method: "GET",
+      headers: {},
+    },
   },
 );
 
