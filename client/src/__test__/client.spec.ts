@@ -6,7 +6,6 @@ import test, { ExecutionContext } from "ava";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type * as _ from "../fetch"; // Otherwise TS-Node will not work
 import * as spec from "../client";
-import * as errors from "../errors";
 // Notice that using fetch-mock forces downgrade of node-fetch to 2.x series.
 // This is because fetch-mock uses 'require' to load node-fetch, and versions 3.x of node-fetch do not support that.
 import fetchMock, { type MockRequest } from "fetch-mock";
@@ -130,9 +129,9 @@ test.serial(
     url: fetchInputURL,
     opts: {
       method: "POST",
-      body: '{"property":"value"}',
+      body: new TextEncoder().encode('{"property":"value"}'),
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
       },
     },
   },
@@ -179,7 +178,7 @@ test.serial(
     await c.throwsAsync(
       async () => await callHttp({ method: "GET", url: "/" }),
       {
-        instanceOf: errors.Non2xxStatusCodeError,
+        instanceOf: data.Non2xxStatusCodeError,
       },
     );
     c.deepEqual(recordedCalls, [
