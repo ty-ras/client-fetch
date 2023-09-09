@@ -6,7 +6,6 @@ import test, { ExecutionContext } from "ava";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type * as _ from "../fetch"; // Otherwise TS-Node will not work
 import * as spec from "../client";
-import * as errors from "../errors";
 // Notice that using fetch-mock forces downgrade of node-fetch to 2.x series.
 // This is because fetch-mock uses 'require' to load node-fetch, and versions 3.x of node-fetch do not support that.
 import fetchMock, { type MockRequest } from "fetch-mock";
@@ -130,9 +129,9 @@ test.serial(
     url: fetchInputURL,
     opts: {
       method: "POST",
-      body: '{"property":"value"}',
+      body: new TextEncoder().encode('{"property":"value"}'),
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
       },
     },
   },
@@ -155,28 +154,18 @@ test.serial(
   },
 );
 
-test.serial("Validate that callHttp detects invalid pathname", async (c) => {
-  c.plan(1);
-  await c.throwsAsync(
-    async () =>
-      await callHttp({ method: "GET", url: "/path?query=not-allowed" }),
-    {
-      instanceOf: errors.InvalidPathnameError,
-    },
-  );
-});
-
 test.serial(
-  "Validate that callHttp detects invalid pathname with hash",
-  async (c) => {
-    c.plan(1);
-    await c.throwsAsync(
-      async () =>
-        await callHttp({ method: "GET", url: "/path#hash=not-allowed" }),
-      {
-        instanceOf: errors.InvalidPathnameError,
-      },
-    );
+  "Validate that callHttp escapes invalid pathname",
+  validateSuccessfulInvocation,
+  { method: "GET", url: "/path?query=not-allowed#hash-not-allowed-either" },
+  { body: undefined },
+  "",
+  {
+    url: `${fetchInputURL}path%3Fquery=not-allowed%23hash-not-allowed-either`,
+    opts: {
+      method: "GET",
+      headers: {},
+    },
   },
 );
 
@@ -189,7 +178,7 @@ test.serial(
     await c.throwsAsync(
       async () => await callHttp({ method: "GET", url: "/" }),
       {
-        instanceOf: errors.Non2xxStatusCodeError,
+        instanceOf: data.Non2xxStatusCodeError,
       },
     );
     c.deepEqual(recordedCalls, [

@@ -8,4 +8,4 @@ The protocol specification is checked both at compile-time and run-time to verif
 This all is done in such way that it does not make development tedious or boring, but instead robust and fun!
 
 This particular repository contains library which implements typesafe HTTP invocation API of [`@ty-ras/data-frontent`](https://github.com/ty-ras/data) using [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
-- [`@ty-ras/client-fetch`](./client) contains code for creating callbacks implementing `CallHTTPEndpoint` using the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+- [`@ty-ras/client-fetch`](./code/client) contains code for creating callbacks implementing `CallHTTPEndpoint` using the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
